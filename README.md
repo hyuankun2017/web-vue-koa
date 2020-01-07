@@ -25,5 +25,5 @@ npm run test:unit
 npm run lint
 ```
 
-### Customize configuration
+### Customize configuration https://github.com/tough1985/hello-koa2/blob/master/config/log_config.js
 See [Configuration Reference](https://cli.vuejs.org/config/).
