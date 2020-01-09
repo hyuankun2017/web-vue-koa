@@ -4,11 +4,43 @@
  * Module dependencies.
  */
 var config = require('../config');
-console.log('process.env.NODE_ENV', config.env)
+// console.log('process.env.NODE_ENV', config.env)
 var app = require('../app');
 var debug = require('debug')('demo:server');
 var http = require('http');
 
+var fs = require('fs');
+var configLog = require('../config/log_conf');
+
+/**
+ * 确定目录是否存在，如果不存在则创建目录
+ */
+var confirmPath = function(pathStr){
+  if(!fs.existsSync(pathStr)){
+    fs.mkdirSync(pathStr);
+    console.log('create path', pathStr);
+  }
+}
+// console.log('configLog', configLog)
+/**
+ * 初始化log目录
+ */
+var initLogPath = function(){
+  // 创建log目录
+  if(configLog.baseLogPath){
+    confirmPath(configLog.baseLogPath);
+    // 根据不同的log type, create 不同的目录
+    let listPath = Object.keys(configLog.appenders) || [];
+    if(!listPath.length) console.log('---配置参数为空---');
+    listPath.forEach(v => {
+      if(configLog.appenders[v].path){
+        confirmPath(configLog.baseLogPath + configLog.appenders[v].path);
+      }
+    })
+  }
+}
+
+initLogPath();
 /**
  * Get port from environment and store in Express.
  */

@@ -20,7 +20,13 @@ var errorFileName = "error";
 //错误日志输出完整路径
 var errorLogPath = baseLogPath + errorPath + "/" + errorFileName;
 // var errorLogPath = path.resolve(__dirname, "../logs/error/error");
- 
+
+//请求日志目录
+var requestPath = "/request";
+//请求日志文件名
+var requestFileName = "request";
+//请求日志输出完整路径
+var requestLogPath = baseLogPath + requestPath + "/" + requestFileName;
 
 //响应日志目录
 var responsePath = "/response";
@@ -28,37 +34,63 @@ var responsePath = "/response";
 var responseFileName = "response";
 //响应日志输出完整路径
 var responseLogPath = baseLogPath + responsePath + "/" + responseFileName;
-// var responseLogPath = path.resolve(__dirname, "../logs/response/response");
 
 module.exports = {
-    "appenders": [
-        {
-            "type":"console",
-            "category":"console"
+    "appenders": {
+        console: {
+            type: 'console'
         },
-        //错误日志
-        {
-            "category":"errorLogger",             //logger名称
-            "type": "dateFile",                   //日志类型
-            "filename": errorLogPath,             //日志输出位置
-            "alwaysIncludePattern":true,          //是否总是有后缀名
-            "pattern": "-yyyy-MM-dd-hh.log",      //后缀，每小时创建一个新的日志文件
-            "path": errorPath                     //自定义属性，错误日志的根目录
+        errorLogger: { //error log
+            type: 'dateFile',  // 日志类型
+            filename: errorLogPath,
+            pattern: "-yyyy-MM-dd-hh.log", 
+            alwaysIncludePattern: true,
+            encoding: 'utf-8',
+            path: errorPath,                   //自定义属性，日志的根目录
+            maxLogSize: 5000,
+            layout: {
+                type: 'basic'
+            }
         },
-        //响应日志
-        {
-            "category":"resLogger",
-            "type": "dateFile",
-            "filename": responseLogPath,
-            "alwaysIncludePattern":true,
-            "pattern": "-yyyy-MM-dd-hh.log",
-            "path": responsePath  
+        http: {
+            type: 'dateFile', 
+            filename: requestLogPath,            //日志输出位置
+            pattern: "-yyyy-MM-dd-hh.log",        //后缀，每小时创建一个新的日志文件
+            alwaysIncludePattern: true,           //是否总是有后缀名
+            encoding: 'utf-8',
+            path: requestPath,                   //自定义属性，日志的根目录
+            maxLogSize: 5000,
+            layout: {
+                type: 'basic'
+            }
+        },
+        resLogger: { // response logs
+            type: 'dateFile', 
+            filename: responseLogPath,            //日志输出位置
+            pattern: "-yyyy-MM-dd-hh.log",        //后缀，每小时创建一个新的日志文件
+            alwaysIncludePattern: true,           //是否总是有后缀名
+            encoding: 'utf-8',
+            path: responsePath,                   //自定义属性，日志的根目录
+            maxLogSize: 5000,
+            layout: {
+                type: 'basic'
+            }
         }
-    ],
-    "levels": { //设置logger名称对应的的日志等级
-        "errorLogger":"ALL",
-        "console": "ALL",
-        "resLogger":"ALL"
+    },
+    categories: {// 供外部调用的名称和对应设置定义
+        default: {
+            appenders: ['console'], level: 'all'
+        },
+        resLogger: {
+            appenders: ['resLogger'], level: 'info'
+        },
+        errorLogger: {
+            appenders: ['errorLogger'], level: 'error'
+        },
+        http: {
+            appenders: ['http'], level: 'info'
+        }
     },
     baseLogPath                //logs根目录
+    // replaceConsole: true
 }

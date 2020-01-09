@@ -7,13 +7,23 @@ log4js.configure(log_config);
 
 var logUtil = {};
 
-var errorLogger = log4js.getLogger('errorLogger');console.log('errorLogger', errorLogger)
+//调用预先定义的日志名称
+var errorLogger = log4js.getLogger('errorLogger');
+var reqLogger = log4js.getLogger('http');
 var resLogger = log4js.getLogger('resLogger');
+var consoleLog = log4js.getLogger();
 
 //封装错误日志
 logUtil.logError = function (ctx, error, resTime) {
     if (ctx && error) {
         errorLogger.error(formatError(ctx, error, resTime));
+    }
+};
+
+// 封装请求日志
+logUtil.reqLog = function (ctx, resTime) {
+    if (ctx) {
+        reqLogger.info(formatReqLog(ctx, resTime));
     }
 };
 
@@ -98,3 +108,10 @@ var formatReqLog = function (req, resTime) {
 }
 
 module.exports = logUtil;
+// module.exports = () => {
+//     return async (ctx, next) => {
+//         ctx.logger = logUtil;
+//         ctx.logger.reqLog(ctx, 0);
+//         await next();
+//     };
+// };
