@@ -41,7 +41,7 @@ app.use(async (ctx, next) => {
   }catch(err) {
     ms = new Date() - start;
     // record error log
-    logUtil.errorLogger(ctx, err, ms);
+    logUtil.logError(ctx, err, ms);
   }
   // const ms = new Date() - start
   // console.log(`${ctx.method} ${ctx.url} - ${ms}ms`)
